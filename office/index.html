@@ -19,6 +19,7 @@
     --vika: #ec93d4;
     --khomyak: #f0a35a;
     --bozorov: #56c7a4;
+    --timlid: #b9a2ff;
     --ink: #0b0e13;
     --paper: #ece6d8;
     --pixel: "Press Start 2P", ui-monospace, monospace;
@@ -52,9 +53,9 @@
   .bubble b { color: var(--whoDark); font-weight: 600; }
   .demo-tag { position: absolute; right: 8px; bottom: 8px; font-family: var(--pixel); font-size: 9px; background: var(--accent); color: #161b22; padding: 4px 6px; }
 
-  .team { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
-  .mate { background: var(--panel); border: 1px solid var(--line); border-top: 3px solid var(--who); border-radius: 6px; padding: 12px 14px; display: grid; grid-template-columns: 56px 1fr; gap: 4px 12px; align-items: start; min-width: 0; }
-  .mate canvas { grid-row: span 3; width: 56px; height: 56px; image-rendering: pixelated; background: var(--panel-2); border-radius: 4px; }
+  .team { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+  .mate { background: var(--panel); border: 1px solid var(--line); border-top: 3px solid var(--who); border-radius: 6px; padding: 12px 14px; display: grid; grid-template-columns: 40px 1fr; gap: 4px 10px; align-items: start; min-width: 0; }
+  .mate canvas { grid-row: span 3; width: 40px; height: 40px; image-rendering: pixelated; background: var(--panel-2); border-radius: 4px; }
   .mate .nm { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; min-width: 0; }
   .mate .nm strong { font-family: var(--pixel); font-size: 11px; font-weight: 400; color: var(--who); }
   .mate .role { color: var(--muted); font-size: 12px; }
@@ -101,11 +102,11 @@
 <div class="wrap">
   <header>
     <h1>Офис <span>Авзала</span></h1>
-    <div class="sub">Команда ЗПИФ: <b style="color:var(--avzal)">Авзал</b> ищет фонды, <b style="color:var(--vika)">Вика</b> проверяет, <b style="color:var(--bozorov)">Бозоров</b> сверяет с шариатом, <b style="color:var(--khomyak)">Хомяк</b> считает портфель</div>
+    <div class="sub">Команда ЗПИФ: <b style="color:var(--timlid)">Тимлид</b> раздаёт задачи, <b style="color:var(--avzal)">Авзал</b> ищет фонды, <b style="color:var(--vika)">Вика</b> проверяет, <b style="color:var(--bozorov)">Бозоров</b> сверяет с шариатом, <b style="color:var(--khomyak)">Хомяк</b> считает портфель</div>
   </header>
 
   <div class="scene" id="scene">
-    <canvas id="c" width="352" height="144" aria-label="Пиксельный офис: Авзал, Вика, Бозоров и Хомяк за работой"></canvas>
+    <canvas id="c" width="352" height="144" aria-label="Пиксельный офис: Тимлид, Авзал, Вика, Бозоров и Хомяк за работой"></canvas>
     <div class="demo-tag" id="demoTag" hidden>ДЕМО</div>
   </div>
 
@@ -152,6 +153,7 @@
   };
   const WORK = ["search", "read", "analyze", "write"];
   const TEAM = [
+    { id: "timlid",  name: "Тимлид", role: "Координатор", does: "Решает, кто делает задание", seat: 0, home: [176, 133], color: "var(--timlid)", dark: "#5b3fb5", fem: false },
     { id: "avzal",   name: "Авзал", role: "Аналитик ЗПИФ",        does: "Ищет и разбирает фонды", seat: 144, color: "var(--avzal)",   dark: "#2f6fb0", fem: false },
     { id: "vika",    name: "Вика",  role: "Ревизор",              does: "Проверяет цифры по первоисточникам", seat: 40, color: "var(--vika)", dark: "#a1347f", fem: true },
     { id: "bozorov", name: "Бозоров", role: "Шариат-контролёр", does: "Сверяет фонды с нормами шариата", seat: 312, color: "var(--bozorov)", dark: "#22785e", fem: false },
@@ -161,16 +163,18 @@
   const LINES = {
     avzal:   { search: "Смотрю котировки на Мосбирже…", read: "Беру с полки отчёты УК…", analyze: "Рисую дисконты на флипчарте…", write: "Пишу вывод…", done: "Отчёт готов! Несу Вике", error: "Не получается, нужна помощь" },
     vika:    { search: "Ищу первоисточники…", read: "Сверяю цифры под лупой…", analyze: "Пересчитываю дисконт и доходность…", write: "Пишу вердикт…", done: "Проверила! Передаю дальше", error: "Цифры не сходятся…" },
+    timlid:  { search: "Читаю задание…", read: "Читаю задание…", analyze: "Решаю, кому отдать задачу…", write: "Пишу план работы…", done: "Распределил! Несу задание", error: "Не понял задание…" },
     bozorov: { search: "Ищу правила фонда и отчётность…", read: "Смотрю, кто арендаторы…", analyze: "Считаю долг и проценты по AAOIFI…", write: "Пишу вердикт по шариату…", done: "Проверил! Передаю дальше", error: "Не хватает данных…" },
     khomyak: { search: "Смотрю цены паёв…", read: "Открываю портфель…", analyze: "Считаю доли и выплаты…", write: "Составляю план покупок…", done: "План готов!", error: "Не хватает данных…" },
   };
   const STYLE = {
     avzal:   { skin: "#e0a77a", hair: "#2a1d17", top: "#3f7cc0", pants: "#2c2f3a", shoe: "#15181d" },
     vika:    { skin: "#f0c09a", hair: "#8a3b2a", top: "#a14f8f", pants: "#3a3e4c", shoe: "#5a2340" },
+    timlid:  { skin: "#e6b08a", hair: "#6b4a2f", top: "#7a5fc0", pants: "#3a3e4c", shoe: "#15181d" },
     bozorov: { skin: "#d9a07a", hair: "#1d1714", top: "#2f6b55", pants: "#2c2f3a", shoe: "#15181d" },
     khomyak: { skin: "#e8b48a", hair: "#d39248", top: "#d39248", pants: "#4a5a70", shoe: "#15181d" },
   };
-  const SPOTS = { flip: [68, 123], cooler: [178, 123], printer: [212, 128], shelf: [236, 127], window: [30, 128], user: [176, 136] };
+  const SPOTS = { flip: [68, 123], cooler: [178, 123], printer: [212, 128], shelf: [236, 127], window: [30, 128], user: [190, 136] };
 
   const $ = id => document.getElementById(id);
   const cv = $("c"), ctx = cv.getContext("2d");
@@ -195,13 +199,13 @@
   }
   function whoOf(e) {
     if (e.who && BY[e.who]) return { who: e.who, text: e.text || "" };
-    const m = /^(Вика|Хомяк|Авзал|Бозоров|Шариат):\s*/.exec(e.text || "");
+    const m = /^(Вика|Хомяк|Авзал|Бозоров|Шариат|Тимлид):\s*/.exec(e.text || "");
     if (m) return { who: m[1] === "Шариат" ? "bozorov" : TEAM.find(a => a.name === m[1]).id, text: e.text.slice(m[0].length) };
     return { who: "avzal", text: e.text || "" };
   }
 
   // ---------- characters: walking brains ----------
-  const chars = TEAM.map(a => ({ id: a.id, seat: a.seat, x: a.seat, y: LANE, seated: true, pose: "sit", face: 0, plan: [], cur: null, st: "idle", doneAt: 0 }));
+  const chars = TEAM.map(a => ({ id: a.id, seat: a.seat, home: a.home, x: a.seat || a.home[0], y: a.seat ? LANE : a.home[1], seated: !!a.seat, pose: "sit", face: 0, plan: [], cur: null, st: "idle", doneAt: 0 }));
   const SEAT = { go: "seat" };
 
   const DEFAULT_CHAIN = ["avzal", "vika", "khomyak"];
@@ -210,12 +214,22 @@
     return c.length ? c : DEFAULT_CHAIN;
   }
   function handoffSpot(id) {
-    const ch = chainOf(shown), i = ch.indexOf(id), next = i >= 0 ? ch[i + 1] : null;
+    const ch = chainOf(shown).filter(x => x !== "timlid"), i = ch.indexOf(id), next = i >= 0 ? ch[i + 1] : null;
     if (!next) return SPOTS.user;
     const ns = BY[next].seat, me = BY[id].seat;
     return [ns + (ns < me ? 8 : -8), 129];
   }
+  function frontOf(id) { const sx = BY[id].seat; return [sx + (sx < 176 ? 8 : -8), 129]; }
   function planFor(c, st, prev) {
+    if (!c.seat) {
+      if (WORK.includes(st)) return [SEAT, { pose: "think", dur: Infinity }];
+      if (st === "error") return [SEAT, { pose: "error", dur: Infinity }];
+      if (st === "done" && WORK.includes(prev)) {
+        const first = chainOf(shown).find(id => id !== "timlid");
+        if (first) return [{ go: frontOf(first), carry: true }, { pose: "give", dur: 1700 }, SEAT, { pose: "stand", dur: 3000 }];
+      }
+      return [];
+    }
     switch (st) {
       case "search":  return [SEAT, { pose: "type", dur: Infinity }];
       case "read":    return [{ go: SPOTS.shelf }, { pose: "reach", dur: 1800 }, SEAT, { pose: "read", dur: Infinity }];
@@ -229,11 +243,11 @@
     }
   }
   function wander(c) {
-    const others = TEAM.filter(a => a.id !== c.id);
+    const others = TEAM.filter(a => a.id !== c.id && a.seat);
     const mate = others[Math.floor(Math.random() * others.length)];
     const j = () => Math.round(rand(-6, 6));
     const opts = [
-      [3, [SEAT, { pose: "sit", dur: rand(4000, 8000) }]],
+      [3, [SEAT, { pose: c.seat ? "sit" : "stand", dur: rand(4000, 8000) }]],
       [2, [{ go: [SPOTS.cooler[0] + j(), SPOTS.cooler[1]] }, { pose: "sip", dur: rand(3000, 5000) }]],
       [1, [{ go: [SPOTS.window[0] + j(), SPOTS.window[1]] }, { pose: "look", dur: rand(2500, 4000) }]],
       [1, [{ go: [SPOTS.printer[0] + j(), SPOTS.printer[1]] }, { pose: "stand", dur: rand(2000, 3000) }]],
@@ -261,7 +275,7 @@
     if (it.go) {
       const isSeat = it.go === "seat";
       if (isSeat && c.seated) { c.cur = null; return; }
-      const [tx, ty] = isSeat ? [c.seat, LANE] : it.go;
+      const [tx, ty] = isSeat ? (c.seat ? [c.seat, LANE] : c.home) : it.go;
       if (c.seated) { c.seated = false; c.x = c.seat; c.y = LANE; }
       c.pose = it.carry ? "carry" : "walk";
       if (reduce) { c.x = tx; c.y = ty; }
@@ -269,7 +283,7 @@
       const dx = tx - c.x, dy = ty - c.y;
       if (Math.abs(dx) > 0.5) { c.x += Math.sign(dx) * Math.min(sp, Math.abs(dx)); c.face = Math.sign(dx); }
       else if (Math.abs(dy) > 0.5) { c.x = tx; c.y += Math.sign(dy) * Math.min(sp, Math.abs(dy)); c.face = 0; }
-      else { c.x = tx; c.y = ty; c.face = 0; if (isSeat) c.seated = true; c.cur = null; }
+      else { c.x = tx; c.y = ty; c.face = 0; if (isSeat && c.seat) c.seated = true; c.cur = null; }
     } else {
       if (it.start == null) it.start = now;
       c.pose = it.pose; c.face = it.face || 0;
@@ -345,7 +359,7 @@
     P(296, 44, 34, 2, "#3a281c"); P(298, 38, 4, 6, "#3c8f5d"); P(303, 37, 3, 7, "#7d5a3c"); P(307, 39, 3, 5, "#2f6b55");
 
     // chairs
-    TEAM.forEach(a => { P(a.seat - 11, 72, 22, 22, "#2c2f3a"); P(a.seat - 9, 74, 18, 18, "#3a3e4c"); });
+    TEAM.filter(a => a.seat).forEach(a => { P(a.seat - 11, 72, 22, 22, "#2c2f3a"); P(a.seat - 9, 74, 18, 18, "#3a3e4c"); });
   }
 
   // flipchart, cooler, printer: floor props behind the walking lane
@@ -460,11 +474,13 @@
     P(x - 6, top + 12, 12, 12, s.top);
     if (id === "avzal") { P(x - 2, top + 12, 4, 2, "#e9e4d8"); P(x - 1, top + 14, 2, 5, "#24303c"); }
     if (id === "vika") { P(x - 2, top + 12, 4, 1, "#f2d27a"); P(x - 6, top + 12, 2, 4, s.hair); P(x + 4, top + 12, 2, 4, s.hair); }
+    if (id === "timlid") { P(x - 3, top + 12, 6, 2, "#e9e4d8"); }
     if (id === "bozorov") { P(x - 2, top + 12, 4, 3, "#e9e4d8"); P(x - 1, top + 12, 2, 1, "#c9ced6"); }
     if (id === "khomyak") { P(x - 3, top + 15, 6, 7, "#f1dfc4"); P(x - 2, top + 12, 1, 3, "#f1dfc4"); P(x + 1, top + 12, 1, 3, "#f1dfc4"); }
     // head
     P(x - 5, top + 1, 10, 11, s.skin);
     if (id === "avzal") { P(x - 5, top, 10, 3, s.hair); P(x - 6, top + 1, 2, 5, s.hair); P(x + 4, top + 1, 2, 4, s.hair); }
+    if (id === "timlid") { P(x - 5, top, 10, 3, s.hair); P(x - 6, top + 1, 2, 4, s.hair); P(x + 1, top + 1, 4, 2, s.hair); P(x - 6, top - 1, 12, 1, "#2c2f3a"); P(x - 7, top, 2, 6, "#2c2f3a"); P(x + 5, top, 2, 6, "#2c2f3a"); P(x - 7, top + 5, 2, 3, "#2c2f3a"); P(x - 5, top + 8, 3, 1, "#2c2f3a"); }
     if (id === "bozorov") { P(x - 5, top, 10, 3, s.hair); P(x - 6, top + 1, 2, 5, s.hair); P(x + 4, top + 1, 2, 5, s.hair); P(x - 5, top + 8, 2, 4, s.hair); P(x + 3, top + 8, 2, 4, s.hair); P(x - 3, top + 11, 6, 2, s.hair); }
     if (id === "vika") { P(x - 5, top, 10, 3, s.hair); P(x - 5, top + 2, 4, 2, s.hair); P(x + 2, top + 2, 3, 1, s.hair); P(x + 3, top - 1, 3, 2, "#e46a9a"); }
     if (id === "khomyak") {
@@ -510,6 +526,12 @@
       P(x - 8, top + 13, 2, 9, st); P(x - 8, top + 22, 2, 2, sk);
       const w = reduce ? 0 : Math.round(Math.sin(t / 120) * 2);
       P(x + 6, top + 10, 2, 4, st); P(x + 6, top + 8, 5, 2, st); P(x + 11, top + 6 + w, 2, 3, sk); P(x + 12, top + 5 + w, 1, 2, "#b2442f");
+    } else if (pose === "think") {
+      P(x - 8, top + 13, 2, 6, st); P(x - 8, top + 15, 7, 9, "#c9a27a"); P(x - 7, top + 16, 5, 7, "#f5f0e4");
+      const ln = reduce ? 3 : 1 + Math.floor(t / 500) % 3;
+      for (let i = 0; i < ln; i++) P(x - 6, top + 17 + i * 2, 3, 1, "#7a5fc0");
+      P(x + 6, top + 9, 2, 9, st); P(x + 3, top + 8, 3, 2, sk);
+      if (!reduce) { const n = Math.floor(t / 400) % 4; for (let i = 0; i < n; i++) P(x + 7 + i * 3, top - 3 - i * 2, 2, 2, "#e9e4d8"); }
     } else if (pose === "cheer") {
       const up = reduce ? 0 : Math.round(Math.sin(t / 160));
       P(x - 9, top + 2 + up, 3, 11, st); P(x - 9, top - 1 + up, 3, 3, sk);
@@ -623,7 +645,7 @@
     g = ctx;
     drawRoom(t, A);
     chars.filter(c => c.seated).forEach(c => person(c.id, c.seat, SEAT_TOP + (c.pose === "cheer" && !reduce ? -Math.round(Math.abs(Math.sin(t / 180)) * 2) : 0), c.pose, t, c.face, true));
-    TEAM.forEach(a => drawDesk(a, A[a.id].state, t));
+    TEAM.filter(a => a.seat).forEach(a => drawDesk(a, A[a.id].state, t));
     drawProps(t, A);
     chars.filter(c => !c.seated).sort((p, q) => p.y - q.y).forEach(c => {
       const bob = (c.pose === "walk" || c.pose === "carry") && !reduce ? (Math.floor(t / 140) % 2 ? -1 : 0) : 0;
@@ -735,6 +757,8 @@
 
   // ---------- demo: the whole team chain ----------
   const DEMO = [
+    ["timlid", "analyze", "Решаю, кому отдать задачу…"],
+    ["timlid", "done", "Цепочка: Авзал → Вика → Бозоров → Хомяк"],
     ["avzal", "search", "Смотрю котировки паёв на Мосбирже…"],
     ["avzal", "read", "Беру с полки отчёты управляющих компаний"],
     ["avzal", "analyze", "Рисую дисконты на флипчарте"],
