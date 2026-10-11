@@ -18,6 +18,7 @@
     --avzal: #6cb6ff;
     --vika: #ec93d4;
     --khomyak: #f0a35a;
+    --bozorov: #56c7a4;
     --ink: #0b0e13;
     --paper: #ece6d8;
     --pixel: "Press Start 2P", ui-monospace, monospace;
@@ -34,7 +35,7 @@
   .sub b { font-weight: 600; }
 
   .scene { position: relative; border: 4px solid var(--ink); border-radius: 4px; background: var(--ink); overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,.35); }
-  canvas#c { display: block; width: 100%; max-width: 100%; height: auto; aspect-ratio: 2 / 1; image-rendering: pixelated; image-rendering: crisp-edges; }
+  canvas#c { display: block; width: 100%; max-width: 100%; height: auto; aspect-ratio: 352 / 144; image-rendering: pixelated; image-rendering: crisp-edges; }
   .tag {
     position: absolute; left: 0; top: 0; transform: translate(-50%, -100%);
     font-family: var(--pixel); font-size: clamp(6px, 1.25vw, 9px); line-height: 1;
@@ -51,7 +52,7 @@
   .bubble b { color: var(--whoDark); font-weight: 600; }
   .demo-tag { position: absolute; right: 8px; bottom: 8px; font-family: var(--pixel); font-size: 9px; background: var(--accent); color: #161b22; padding: 4px 6px; }
 
-  .team { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; }
+  .team { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
   .mate { background: var(--panel); border: 1px solid var(--line); border-top: 3px solid var(--who); border-radius: 6px; padding: 12px 14px; display: grid; grid-template-columns: 56px 1fr; gap: 4px 12px; align-items: start; min-width: 0; }
   .mate canvas { grid-row: span 3; width: 56px; height: 56px; image-rendering: pixelated; background: var(--panel-2); border-radius: 4px; }
   .mate .nm { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; min-width: 0; }
@@ -100,11 +101,11 @@
 <div class="wrap">
   <header>
     <h1>Офис <span>Авзала</span></h1>
-    <div class="sub">Команда ЗПИФ: <b style="color:var(--avzal)">Авзал</b> ищет фонды, <b style="color:var(--vika)">Вика</b> проверяет, <b style="color:var(--khomyak)">Хомяк</b> считает портфель</div>
+    <div class="sub">Команда ЗПИФ: <b style="color:var(--avzal)">Авзал</b> ищет фонды, <b style="color:var(--vika)">Вика</b> проверяет, <b style="color:var(--bozorov)">Бозоров</b> сверяет с шариатом, <b style="color:var(--khomyak)">Хомяк</b> считает портфель</div>
   </header>
 
   <div class="scene" id="scene">
-    <canvas id="c" width="288" height="144" aria-label="Пиксельный офис: Авзал, Вика и Хомяк за работой"></canvas>
+    <canvas id="c" width="352" height="144" aria-label="Пиксельный офис: Авзал, Вика, Бозоров и Хомяк за работой"></canvas>
     <div class="demo-tag" id="demoTag" hidden>ДЕМО</div>
   </div>
 
@@ -139,7 +140,7 @@
 <script>
 (() => {
   // ---------- team and states ----------
-  const W = 288, H = 144, LANE = 126, SEAT_TOP = 70;
+  const W = 352, H = 144, LANE = 126, SEAT_TOP = 70;
   const STATES = {
     idle:    { label: "Свободен",     tone: "idle" },
     search:  { label: "Ищет",         tone: "work" },
@@ -153,20 +154,23 @@
   const TEAM = [
     { id: "avzal",   name: "Авзал", role: "Аналитик ЗПИФ",        does: "Ищет и разбирает фонды", seat: 144, color: "var(--avzal)",   dark: "#2f6fb0", fem: false },
     { id: "vika",    name: "Вика",  role: "Ревизор",              does: "Проверяет цифры по первоисточникам", seat: 40, color: "var(--vika)", dark: "#a1347f", fem: true },
+    { id: "bozorov", name: "Бозоров", role: "Шариат-контролёр", does: "Сверяет фонды с нормами шариата", seat: 312, color: "var(--bozorov)", dark: "#22785e", fem: false },
     { id: "khomyak", name: "Хомяк", role: "Портфельный менеджер", does: "Ведёт портфель и план покупок", seat: 248, color: "var(--khomyak)", dark: "#b0611c", fem: false },
   ];
   const BY = Object.fromEntries(TEAM.map(a => [a.id, a]));
   const LINES = {
     avzal:   { search: "Смотрю котировки на Мосбирже…", read: "Беру с полки отчёты УК…", analyze: "Рисую дисконты на флипчарте…", write: "Пишу вывод…", done: "Отчёт готов! Несу Вике", error: "Не получается, нужна помощь" },
-    vika:    { search: "Ищу первоисточники…", read: "Сверяю цифры под лупой…", analyze: "Пересчитываю дисконт и доходность…", write: "Пишу вердикт…", done: "Проверила! Передаю Хомяку", error: "Цифры не сходятся…" },
+    vika:    { search: "Ищу первоисточники…", read: "Сверяю цифры под лупой…", analyze: "Пересчитываю дисконт и доходность…", write: "Пишу вердикт…", done: "Проверила! Передаю дальше", error: "Цифры не сходятся…" },
+    bozorov: { search: "Ищу правила фонда и отчётность…", read: "Смотрю, кто арендаторы…", analyze: "Считаю долг и проценты по AAOIFI…", write: "Пишу вердикт по шариату…", done: "Проверил! Передаю дальше", error: "Не хватает данных…" },
     khomyak: { search: "Смотрю цены паёв…", read: "Открываю портфель…", analyze: "Считаю доли и выплаты…", write: "Составляю план покупок…", done: "План готов!", error: "Не хватает данных…" },
   };
   const STYLE = {
     avzal:   { skin: "#e0a77a", hair: "#2a1d17", top: "#3f7cc0", pants: "#2c2f3a", shoe: "#15181d" },
     vika:    { skin: "#f0c09a", hair: "#8a3b2a", top: "#a14f8f", pants: "#3a3e4c", shoe: "#5a2340" },
+    bozorov: { skin: "#d9a07a", hair: "#1d1714", top: "#2f6b55", pants: "#2c2f3a", shoe: "#15181d" },
     khomyak: { skin: "#e8b48a", hair: "#d39248", top: "#d39248", pants: "#4a5a70", shoe: "#15181d" },
   };
-  const SPOTS = { flip: [68, 123], cooler: [178, 123], printer: [212, 128], shelf: [236, 127], window: [30, 128], user: [144, 136] };
+  const SPOTS = { flip: [68, 123], cooler: [178, 123], printer: [212, 128], shelf: [236, 127], window: [30, 128], user: [176, 136] };
 
   const $ = id => document.getElementById(id);
   const cv = $("c"), ctx = cv.getContext("2d");
@@ -191,8 +195,8 @@
   }
   function whoOf(e) {
     if (e.who && BY[e.who]) return { who: e.who, text: e.text || "" };
-    const m = /^(Вика|Хомяк|Авзал):\s*/.exec(e.text || "");
-    if (m) return { who: TEAM.find(a => a.name === m[1]).id, text: e.text.slice(m[0].length) };
+    const m = /^(Вика|Хомяк|Авзал|Бозоров|Шариат):\s*/.exec(e.text || "");
+    if (m) return { who: m[1] === "Шариат" ? "bozorov" : TEAM.find(a => a.name === m[1]).id, text: e.text.slice(m[0].length) };
     return { who: "avzal", text: e.text || "" };
   }
 
@@ -200,10 +204,16 @@
   const chars = TEAM.map(a => ({ id: a.id, seat: a.seat, x: a.seat, y: LANE, seated: true, pose: "sit", face: 0, plan: [], cur: null, st: "idle", doneAt: 0 }));
   const SEAT = { go: "seat" };
 
+  const DEFAULT_CHAIN = ["avzal", "vika", "khomyak"];
+  function chainOf(s) {
+    const c = Array.isArray(s.chain) ? s.chain.filter(id => BY[id]) : [];
+    return c.length ? c : DEFAULT_CHAIN;
+  }
   function handoffSpot(id) {
-    if (id === "avzal") return [BY.vika.seat + 6, 129];
-    if (id === "vika") return [BY.khomyak.seat - 6, 129];
-    return SPOTS.user;
+    const ch = chainOf(shown), i = ch.indexOf(id), next = i >= 0 ? ch[i + 1] : null;
+    if (!next) return SPOTS.user;
+    const ns = BY[next].seat, me = BY[id].seat;
+    return [ns + (ns < me ? 8 : -8), 129];
   }
   function planFor(c, st, prev) {
     switch (st) {
@@ -327,6 +337,13 @@
     P(232, 50, 4, 3, "#d39248"); P(233, 50, 1, 1, "#1b222b");
     P(252, 43, 16, 11, "#3a281c"); P(254, 45, 5, 8, "#d9a441"); P(260, 45, 6, 8, "#b2442f");
 
+    // geometric girih tile above Bozorov
+    P(298, 10, 30, 30, "#1b222b"); P(300, 12, 26, 26, "#e9e4d8");
+    g.fillStyle = "#2f6b55"; g.fillRect(306, 18, 14, 14);
+    g.save(); g.translate(313, 25); g.rotate(Math.PI / 4); g.fillStyle = "#3c8f5d"; g.fillRect(-7, -7, 14, 14); g.restore();
+    P(310, 22, 6, 6, "#d9a441"); P(312, 24, 2, 2, "#e9e4d8");
+    P(296, 44, 34, 2, "#3a281c"); P(298, 38, 4, 6, "#3c8f5d"); P(303, 37, 3, 7, "#7d5a3c"); P(307, 39, 3, 5, "#2f6b55");
+
     // chairs
     TEAM.forEach(a => { P(a.seat - 11, 72, 22, 22, "#2c2f3a"); P(a.seat - 9, 74, 18, 18, "#3a3e4c"); });
   }
@@ -346,6 +363,13 @@
         if (i === 2) { P(x + 20, y + 2 + i * 6, 1, 1, "#ef6b5b"); P(x + 22, y + 4 + i * 6, 1, 1, "#ef6b5b"); P(x + 21, y + 3 + i * 6, 1, 1, "#ef6b5b"); P(x + 22, y + 2 + i * 6, 1, 1, "#ef6b5b"); P(x + 20, y + 4 + i * 6, 1, 1, "#ef6b5b"); }
         else { P(x + 20, y + 4 + i * 6, 1, 1, "#3c8f5d"); P(x + 21, y + 5 + i * 6, 1, 1, "#3c8f5d"); P(x + 22, y + 4 + i * 6, 1, 1, "#3c8f5d"); P(x + 23, y + 3 + i * 6, 1, 1, "#3c8f5d"); P(x + 24, y + 2 + i * 6, 1, 1, "#3c8f5d"); }
       }
+    } else if (flip.who === "bozorov") {
+      // three ratios against the 30% threshold
+      P(x + 3, y + 7, 22, 1, "#ef6b5b");
+      [[0.5, "#3c8f5d"], [0.25, "#3c8f5d"], [0.1, "#3c8f5d"]].forEach(([r, col], i) => {
+        const hgt = Math.round(22 * r * 2.2 * p); P(x + 6 + i * 7, y + 28 - hgt, 4, hgt, col);
+      });
+      P(x + 3, y + 28, 22, 1, "#5d6470");
     } else if (flip.who === "khomyak") {
       const cx = x + 14, cy = y + 16, r = 10, parts = [[0.45, "#d39248"], [0.3, "#3f7cc0"], [0.25, "#3c8f5d"]];
       let a0 = -Math.PI / 2;
@@ -392,6 +416,12 @@
       P(cx - 18, 88, 5, 2, "#ef6b5b"); // red stamp
       if (st !== "read") { P(cx + 9, 89, 4, 4, "#c9a27a"); P(cx + 10, 90, 2, 2, "rgba(160,210,240,.6)"); P(cx + 13, 92, 3, 1, "#5a3b26"); }
       P(cx + 17, 90, 3, 4, "#3c8f5d"); P(cx + 16, 88, 5, 2, "#57b07a");
+    } else if (a.id === "bozorov") {
+      // scales and a stack of books
+      const tilt = (st === "analyze" || st === "read") && !reduce ? Math.round(Math.sin(t / 400)) : 0;
+      P(cx - 19, 92, 8, 2, "#7d5a3c"); P(cx - 16, 84, 2, 8, "#c9a27a"); P(cx - 21, 84 + tilt, 12, 1, "#c9a27a");
+      P(cx - 22, 86 + tilt, 4, 1, "#d9a441"); P(cx - 12, 86 - tilt, 4, 1, "#d9a441");
+      P(cx + 8, 91, 8, 3, "#2f6b55"); P(cx + 9, 88, 7, 3, "#7d5a3c"); P(cx + 8, 86, 8, 2, "#b2442f");
     } else {
       // calculator and a piggy bank
       P(cx - 21, 87, 8, 7, "#5d6470"); P(cx - 20, 88, 6, 2, "#9fd3a6");
@@ -430,10 +460,12 @@
     P(x - 6, top + 12, 12, 12, s.top);
     if (id === "avzal") { P(x - 2, top + 12, 4, 2, "#e9e4d8"); P(x - 1, top + 14, 2, 5, "#24303c"); }
     if (id === "vika") { P(x - 2, top + 12, 4, 1, "#f2d27a"); P(x - 6, top + 12, 2, 4, s.hair); P(x + 4, top + 12, 2, 4, s.hair); }
+    if (id === "bozorov") { P(x - 2, top + 12, 4, 3, "#e9e4d8"); P(x - 1, top + 12, 2, 1, "#c9ced6"); }
     if (id === "khomyak") { P(x - 3, top + 15, 6, 7, "#f1dfc4"); P(x - 2, top + 12, 1, 3, "#f1dfc4"); P(x + 1, top + 12, 1, 3, "#f1dfc4"); }
     // head
     P(x - 5, top + 1, 10, 11, s.skin);
     if (id === "avzal") { P(x - 5, top, 10, 3, s.hair); P(x - 6, top + 1, 2, 5, s.hair); P(x + 4, top + 1, 2, 4, s.hair); }
+    if (id === "bozorov") { P(x - 5, top, 10, 3, s.hair); P(x - 6, top + 1, 2, 5, s.hair); P(x + 4, top + 1, 2, 5, s.hair); P(x - 5, top + 8, 2, 4, s.hair); P(x + 3, top + 8, 2, 4, s.hair); P(x - 3, top + 11, 6, 2, s.hair); }
     if (id === "vika") { P(x - 5, top, 10, 3, s.hair); P(x - 5, top + 2, 4, 2, s.hair); P(x + 2, top + 2, 3, 1, s.hair); P(x + 3, top - 1, 3, 2, "#e46a9a"); }
     if (id === "khomyak") {
       P(x - 6, top - 1, 12, 4, s.hair); P(x - 6, top, 2, 12, s.hair); P(x + 4, top, 2, 12, s.hair);
@@ -565,7 +597,7 @@
 
   function drawPlants(t) {
     const sway = reduce ? 0 : Math.round(Math.sin(t / 900));
-    [[4, 1], [276, -1]].forEach(([px, d]) => {
+    [[4, 1], [W - 12, -1]].forEach(([px, d]) => {
       P(px, 124, 10, 12, "#9a5b3a"); P(px - 1, 122, 12, 3, "#b06a45");
       [[px + 4, 112, 2, 11], [px + sway * d, 108, 3, 9], [px + 7 - sway * d, 110, 3, 8], [px + 3, 104, 2, 9]].forEach(([x, y, w, h]) => P(x, y, w, h, "#3c8f5d"));
       P(px + 1 + sway, 107, 2, 3, "#57b07a"); P(px + 8 - sway, 109, 2, 3, "#57b07a");
@@ -671,8 +703,8 @@
     $("sumBox").hidden = !s.summary;
     $("summary").textContent = s.summary || "";
     const chain = $("chain"); chain.textContent = "";
-    const verbs = { avzal: "ищет фонды", vika: "проверяет", khomyak: "план портфеля" };
-    TEAM.forEach((a, i) => {
+    const verbs = { avzal: "ищет фонды", vika: "проверяет", bozorov: "шариат", khomyak: "план портфеля" };
+    chainOf(s).map(id => BY[id]).forEach((a, i) => {
       const st = A[a.id].state;
       const sTone = WORK.includes(st) ? "work" : st === "done" ? "ok" : st === "error" ? "bad" : "idle";
       const el = document.createElement("span"); el.className = "link"; el.dataset.s = sTone;
@@ -686,7 +718,7 @@
     const ol = $("log"); ol.textContent = "";
     if (!list.length) {
       const li = document.createElement("li"); li.className = "empty";
-      li.textContent = "Здесь появятся шаги команды: что Авзал искал, что Вика проверила и что Хомяк посчитал.";
+      li.textContent = "Здесь появятся шаги команды: что Авзал искал, что Вика проверила, что Бозоров сверил с шариатом и что Хомяк посчитал.";
       ol.appendChild(li);
     } else list.slice(0, 40).forEach(e => {
       const { who, text } = whoOf(e);
@@ -711,7 +743,10 @@
     ["vika", "read", "Сверяю цены с Мосбиржей под лупой"],
     ["vika", "analyze", "Пересчитываю дисконт и доходность"],
     ["vika", "write", "Пишу вердикт: можно с поправками"],
-    ["vika", "done", "Проверила! Передаю Хомяку"],
+    ["vika", "done", "Проверила! Передаю Бозорову"],
+    ["bozorov", "read", "Смотрю, кто арендаторы склада"],
+    ["bozorov", "analyze", "Считаю долг и проценты по AAOIFI"],
+    ["bozorov", "done", "Соответствует! Передаю Хомяку"],
     ["khomyak", "analyze", "Считаю доли портфеля и выплаты"],
     ["khomyak", "write", "Составляю план: две лимитные заявки"],
     ["khomyak", "done", "План готов!"],
@@ -725,7 +760,7 @@
       const [who, state, step] = DEMO[demo.i++];
       demo.agents = { ...demo.agents, [who]: { state, step } };
       demo.log.unshift({ t: new Date().toISOString(), state, text: step, who });
-      shown = { state, step, agent: who, agents: demo.agents, task: "Пример: какой ЗПИФ купить, проверить вывод и встроить в портфель", summary: who === "khomyak" && state === "done" ? "Это демонстрация. Настоящий итог появится здесь, когда вы позовёте команду." : "", updatedAt: null };
+      shown = { state, step, agent: who, agents: demo.agents, chain: ["avzal", "vika", "bozorov", "khomyak"], task: "Пример: какой халяльный ЗПИФ купить и как встроить его в портфель", summary: who === "khomyak" && state === "done" ? "Это демонстрация. Настоящий итог появится здесь, когда вы позовёте команду." : "", updatedAt: null };
       render();
       demo.timer = setTimeout(tick, state === "done" ? 7000 : 5000);
     };
